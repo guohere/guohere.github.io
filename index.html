@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xusheng Guo | AI & Robotics Portfolio</title>
+    <style>
+        :root { --primary: #0078d4; --dark: #1e293b; --light: #f8fafc; --accent: #2563eb; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, system-ui, sans-serif; line-height: 1.6; color: var(--dark); background: var(--light); margin: 0; scroll-behavior: smooth; }
+        
+        nav { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); padding: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; z-index: 1000; }
+        nav a { margin: 0 15px; text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.95rem; }
+        nav a:hover { color: var(--primary); }
+
+        .hero { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 20px; }
+        .hero h1 { font-size: 3rem; margin: 0; letter-spacing: -1px; }
+        .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 15px 0; }
+        
+        .btn { padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; background: var(--primary); color: white; margin-top: 20px; display: inline-block; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        section { padding: 100px 20px; max-width: 900px; margin: 0 auto; }
+        h2 { font-size: 2rem; border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 30px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 25px; }
+        
+        .tag-container { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background: #eff6ff; color: #1e40af; padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        
+        footer { text-align: center; padding: 60px 20px; color: #94a3b8; font-size: 0.9rem; border-top: 1px solid #e2e8f0; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#about">About</a>
+        <a href="#education">Education</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#interests">Interests</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <section class="hero">
+        <h1>Xusheng Guo</h1>
+        <p>Master of Science in Artificial Intelligence Student @ OTH Amberg-Weiden</p>
+        <a href="#projects" class="btn">Explore My Projects</a>
+    </section>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>I am a computer scientist specializing in <strong>Artificial Intelligence and Robotic Perception</strong>. My research and development interests lie at the intersection of <strong>Large Language Models (LLMs)</strong> and edge computing. I have experience configuring <strong>NVIDIA Jetson</strong> platforms for real-time applications and building robust data pipelines for automotive safety.</p>
+        <div class="tag-container">
+            <span class="tag">RAG & LLMs</span> <span class="tag">Computer Vision</span> <span class="tag">ROS2</span> 
+            <span class="tag">NVIDIA Jetson</span> <span class="tag">PyTorch</span> <span class="tag">Docker</span> 
+            <span class="tag">Linux</span> <span class="tag">Ouster LiDAR</span>
+        </div>
+    </section>
+
+    <section id="education">
+        <h2>Education</h2>
+        <div class="card">
+            <h3 style="margin-top:0;">Master of Science in Artificial Intelligence</h3>
+            <p><strong>OTH Amberg-Weiden, Germany</strong> | 2024 – 2026</p>
+            <p>Focusing on Machine Learning, Natural Language Processing (NLP), and Computer Vision.</p>
+        </div>
+        <div class="card">
+            <h3 style="margin-top:0;">Bachelor of Computer Science</h3>
+            <p><strong>Xi'an University of Posts and Telecommunications, China</strong></p>
+            <p>Solid foundation in software engineering, algorithms, and data structures.</p>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2>Professional Experience</h2>
+        <div class="card">
+            <h3 style="margin-top:0;">Student Assistant | Automobile Team</h3>
+            <p><strong>OTH Amberg-Weiden, Germany</strong> | 2024 – Present</p>
+            <ul>
+                <li><strong>Edge AI Infrastructure:</strong> Configured and deployed Nvidia Jetson platforms for real-time robotic perception using ROS2.</li>
+                <li><strong>Industrial Data Pipelines:</strong> Developed automated processing for Ouster OS1 LiDAR data and ROI filtering for automotive safety analysis.</li>
+                <li><strong>Distributed Communication:</strong> Engineered ROS2 message systems for decentralized communication via LoRa and Dual-Band WiFi.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2>Selected AI Projects</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Industrial ML: Regime Segmentation</h3>
+                <p>Developed a <strong>Mixture-of-Experts (MoE)</strong> framework to handle high-dimensional industrial datasets with 273 features.</p>
+                <ul>
+                    <li>Integrated XGBClassifier gating mechanisms to route sensor data to specialized regressors.</li>
+                    <li>Achieved high reliability (0.944 R²) for predictive maintenance applications.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Multi-Modal Quantum Extraction</h3>
+                <p>Engineered a pipeline to autonomously extract quantum circuit schematics from over 660 research papers.</p>
+                <ul>
+                    <li>Integrated <strong>YOLOv8</strong> for layout-invariant diagram detection.</li>
+                    <li>Optimized <strong>Qwen2-VL-7B</strong> using 4-bit quantization for local deployment.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="interests">
+        <h2>Beyond the Code</h2>
+        <div class="grid">
+            <div class="card" style="display: flex; align-items: center; gap: 20px;">
+                <div style="font-size: 2.5rem;">🏀</div>
+                <div>
+                    <h4 style="margin: 0;">Basketball</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem;">I enjoy playing competitive basketball, which emphasizes the value of teamwork and strategy.</p>
+                </div>
+            </div>
+            <div class="card" style="display: flex; align-items: center; gap: 20px;">
+                <div style="font-size: 2.5rem;">🏋️‍♂️</div>
+                <div>
+                    <h4 style="margin: 0;">Fitness & Gym</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Training helps maintain the discipline and mental resilience needed for complex engineering tasks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" style="text-align: center;">
+        <h2>Connect</h2>
+        <p>Currently based in <strong>Aachen, Germany</strong>. Full CV available upon request.</p>
+        <a href="mailto:x.guo@oth-aw.de" style="color: var(--primary); font-weight: bold; font-size: 1.3rem; text-decoration: none;">x.guo@oth-aw.de</a>
+        <div style="margin-top: 30px; font-weight: 600;">
+            <a href="https://linkedin.com/in/xusheng-guo-964373307/" target="_blank" style="margin: 0 10px; text-decoration: none; color: var(--dark);">LinkedIn</a> | 
+            <a href="https://github.com/guohere" target="_blank" style="margin: 0 10px; text-decoration: none; color: var(--dark);">GitHub</a>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Xusheng Guo | Built for GitHub Pages | English (C1) & German (B1)
+    </footer>
+
+</body>
+</html>
