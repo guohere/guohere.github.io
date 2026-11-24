@@ -1,0 +1,106 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = SITE.description,
+  ogType = 'website',
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? SITE.url);
+---
+
+<!doctype html>
+<html lang="en" data-lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.title} — Blog`} href="/rss.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={SITE.title} />
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Prevent theme & language flash on load -->
+    <script is:inline>
+      (() => {
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : prefersDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+
+        const storedLang = localStorage.getItem('lang');
+        const lang = storedLang === 'de' || storedLang === 'en' ? storedLang : 'en';
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+      })();
+    </script>
+  </head>
+  <body>
+    <Header currentPath={Astro.url.pathname} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Sync localized placeholders whenever language changes
+      function syncLocalizedAttributes() {
+        const lang = document.documentElement.getAttribute('data-lang') === 'de' ? 'de' : 'en';
+        document.querySelectorAll<HTMLInputElement>('[data-placeholder-en]').forEach((el) => {
+          const next = el.getAttribute(`data-placeholder-${lang}`);
+          if (next) el.placeholder = next;
+        });
+      }
+      syncLocalizedAttributes();
+      window.addEventListener('langchange', syncLocalizedAttributes);
+
+      // Enhance code blocks with copy-to-clipboard button
+      document.querySelectorAll('.prose pre').forEach((pre) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'code-copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', async () => {
+          const code = pre.querySelector('code')?.textContent ?? '';
+          try {
+            await navigator.clipboard.writeText(code);
+            btn.textContent = 'Copied';
+            setTimeout(() => (btn.textContent = 'Copy'), 1600);
+          } catch {
+            btn.textContent = 'Error';
+            setTimeout(() => (btn.textContent = 'Copy'), 1600);
+          }
+        });
+        pre.appendChild(btn);
+      });
+    </script>
+  </body>
+</html>

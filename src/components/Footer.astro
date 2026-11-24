@@ -1,0 +1,77 @@
+---
+import { SITE } from '../data/profile';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-meta">
+      <p class="footer-copy">
+        &copy; {year} {SITE.author} ·
+        <span class="lang-en">{SITE.location.en}</span>
+        <span class="lang-de">{SITE.location.de}</span>
+      </p>
+      <p class="footer-sub">
+        <span class="lang-en">{SITE.languages.en} · Built with Astro &amp; GitHub Pages</span>
+        <span class="lang-de">{SITE.languages.de} · Erstellt mit Astro &amp; GitHub Pages</span>
+      </p>
+    </div>
+
+    <div class="footer-links" aria-label="Footer links">
+      <a href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href={`mailto:${SITE.email}`}>
+        <span class="lang-en">Email</span>
+        <span class="lang-de">E-Mail</span>
+      </a>
+      <a href="/rss.xml">RSS</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 0;
+    margin-top: 2rem;
+    background-color: var(--bg);
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-copy {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+  }
+
+  .footer-sub {
+    margin: 0.25rem 0 0;
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .footer-links a {
+    color: var(--ink-secondary);
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+</style>

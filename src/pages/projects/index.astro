@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout
+  title="Projects"
+  description="Selected AI, machine learning, quantization, multimodal LLM, and robotic perception engineering projects by Xusheng Guo."
+>
+  <section class="section">
+    <div class="container">
+      <header class="page-header">
+        <p class="section-eyebrow">
+          <span class="lang-en">Research &amp; Engineering</span>
+          <span class="lang-de">Forschung &amp; Entwicklung</span>
+        </p>
+        <h1 class="page-title">
+          <span class="lang-en">Projects</span>
+          <span class="lang-de">Projekte</span>
+        </h1>
+        <p class="page-intro">
+          <span class="lang-en">
+            Master&rsquo;s thesis research at NXP Semiconductors and selected AI engineering projects in
+            industrial machine learning and multimodal vision-language pipelines.
+          </span>
+          <span class="lang-de">
+            Masterarbeit bei NXP Semiconductors sowie ausgewählte KI-Projekte aus den Bereichen
+            industrielles Machine Learning und multimodale Vision-Language-Pipelines.
+          </span>
+        </p>
+      </header>
+
+      <div class="grid-2">
+        {projects.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: 660px;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.1rem, 4vw, 2.85rem);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+  }
+
+  .page-intro {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--ink-secondary);
+    line-height: 1.65;
+  }
+</style>

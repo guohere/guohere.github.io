@@ -1,0 +1,138 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, estimateReadingTime } from '../utils/blog';
+import { CATEGORY_LABELS } from '../data/profile';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const readingTime = estimateReadingTime(post.body);
+const readingTimeDe = readingTime.replace('min read', 'Min. Lesezeit');
+const catLabel = CATEGORY_LABELS[post.data.category] ?? {
+  en: post.data.category,
+  de: post.data.category,
+};
+const searchText = [
+  post.data.title,
+  post.data.titleDe ?? '',
+  post.data.description,
+  post.data.descriptionDe ?? '',
+  post.data.category,
+  catLabel.de,
+  post.data.tags.join(' '),
+]
+  .join(' ')
+  .toLowerCase();
+---
+
+<article
+  class="post-card"
+  data-category={post.data.category}
+  data-tags={post.data.tags.join(',').toLowerCase()}
+  data-search={searchText}
+>
+  <div class="post-meta">
+    <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+    <span class="meta-sep" aria-hidden="true">·</span>
+    <span class="post-category">
+      <span class="lang-en">{catLabel.en}</span>
+      <span class="lang-de">{catLabel.de}</span>
+    </span>
+    <span class="meta-sep" aria-hidden="true">·</span>
+    <span class="lang-en">{readingTime}</span>
+    <span class="lang-de">{readingTimeDe}</span>
+  </div>
+
+  <h3 class="post-title">
+    <a href={`/blog/${post.id}/`} class="post-link">
+      <span class="lang-en">{post.data.title}</span>
+      <span class="lang-de">{post.data.titleDe ?? post.data.title}</span>
+    </a>
+  </h3>
+
+  <p class="post-description">
+    <span class="lang-en">{post.data.description}</span>
+    <span class="lang-de">{post.data.descriptionDe ?? post.data.description}</span>
+  </p>
+
+  {post.data.tags.length > 0 && (
+    <ul class="tag-list" aria-label="Post tags">
+      {post.data.tags.map((tag) => (
+        <li class="tag">{tag}</li>
+      ))}
+    </ul>
+  )}
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    padding: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  }
+
+  .post-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin-bottom: 0.65rem;
+  }
+
+  .post-category {
+    color: var(--accent-ink);
+    background-color: var(--accent-soft);
+    padding: 0.12rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .meta-sep {
+    opacity: 0.6;
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: 1.38rem;
+    font-weight: 500;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.55rem;
+  }
+
+  .post-link {
+    color: var(--ink);
+  }
+
+  .post-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .post-card:hover .post-link {
+    color: var(--accent);
+  }
+
+  .post-description {
+    margin: 0 0 1rem;
+    font-size: 0.94rem;
+    color: var(--ink-secondary);
+    line-height: 1.6;
+  }
+</style>

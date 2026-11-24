@@ -1,0 +1,276 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { CATEGORY_LABELS } from '../../data/profile';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const categories = ['All', ...Array.from(new Set(posts.map((p) => p.data.category)))];
+---
+
+<BaseLayout
+  title="Blog"
+  description="Technical notes on my Master's thesis, AI engineering projects, quantization, LLMs, and robotic perception."
+>
+  <section class="section">
+    <div class="container">
+      <header class="page-header">
+        <p class="section-eyebrow">
+          <span class="lang-en">Writing &amp; Research Notes</span>
+          <span class="lang-de">Beiträge &amp; Forschungsnotizen</span>
+        </p>
+        <h1 class="page-title">Blog</h1>
+        <p class="page-intro">
+          <span class="lang-en">
+            Knowledge summaries from my Master&rsquo;s thesis, engineering build logs for new projects, and
+            practical notes on quantization, LLMs, and edge robotics.
+          </span>
+          <span class="lang-de">
+            Wissenszusammenfassungen zu meiner Masterarbeit, technische Projektberichte sowie Notizen zu
+            Quantisierung, LLMs und Edge-Robotik.
+          </span>
+        </p>
+      </header>
+
+      <div class="blog-controls" aria-label="Filter and search blog posts">
+        <div class="category-filters" role="group" aria-label="Filter by category">
+          {categories.map((cat, idx) => {
+            const label = CATEGORY_LABELS[cat] ?? { en: cat, de: cat };
+            return (
+              <button
+                type="button"
+                class:list={['filter-btn', { 'filter-btn--active': idx === 0 }]}
+                data-filter={cat}
+                aria-pressed={idx === 0 ? 'true' : 'false'}
+              >
+                <span class="lang-en">{label.en}</span>
+                <span class="lang-de">{label.de}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div class="search-wrap">
+          <label for="blog-search" class="sr-only">Search articles</label>
+          <input
+            id="blog-search"
+            type="search"
+            class="search-input"
+            placeholder="Search posts, tags, topics..."
+            data-placeholder-en="Search posts, tags, topics..."
+            data-placeholder-de="Beiträge, Tags, Themen suchen..."
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <p id="post-count" class="post-count" aria-live="polite">
+        <span class="lang-en">Showing {posts.length} {posts.length === 1 ? 'article' : 'articles'}</span>
+        <span class="lang-de">{posts.length} {posts.length === 1 ? 'Beitrag' : 'Beiträge'} angezeigt</span>
+      </p>
+
+      <div id="posts-list" class="posts-list">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <p>
+          <span class="lang-en">No articles match your current filter or search query.</span>
+          <span class="lang-de">Keine Beiträge passen zum aktuellen Filter oder Suchbegriff.</span>
+        </p>
+        <button id="reset-filters" type="button" class="btn btn--secondary">
+          <span class="lang-en">Reset filters</span>
+          <span class="lang-de">Filter zurücksetzen</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: 660px;
+    margin-bottom: 2.25rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.1rem, 4vw, 2.85rem);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+  }
+
+  .page-intro {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--ink-secondary);
+    line-height: 1.65;
+  }
+
+  .blog-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .filter-btn {
+    padding: 0.42rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--ink-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.84rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+  }
+
+  .filter-btn:hover {
+    border-color: var(--border-strong);
+    color: var(--ink);
+  }
+
+  .filter-btn--active {
+    background-color: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .filter-btn--active:hover {
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .search-wrap {
+    flex: 1 1 240px;
+    max-width: 320px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.52rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    transition: border-color var(--transition);
+  }
+
+  .search-input::placeholder {
+    color: var(--ink-muted);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .post-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin: 0 0 1.25rem;
+  }
+
+  .posts-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background-color: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    color: var(--ink-secondary);
+  }
+
+  .empty-state p {
+    margin: 0 0 1rem;
+  }
+</style>
+
+<script>
+  const filterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter-btn'));
+  const searchInput = document.getElementById('blog-search') as HTMLInputElement | null;
+  const postCards = Array.from(document.querySelectorAll<HTMLElement>('#posts-list .post-card'));
+  const countEl = document.getElementById('post-count');
+  const emptyEl = document.getElementById('empty-state');
+  const resetBtn = document.getElementById('reset-filters');
+
+  let activeCategory = 'All';
+
+  function applyFilters() {
+    const query = (searchInput?.value ?? '').trim().toLowerCase();
+    let visible = 0;
+
+    postCards.forEach((card) => {
+      const cat = card.dataset.category ?? '';
+      const haystack = card.dataset.search ?? '';
+      const matchesCategory = activeCategory === 'All' || cat === activeCategory;
+      const matchesQuery = !query || haystack.includes(query);
+      const show = matchesCategory && matchesQuery;
+
+      card.style.display = show ? '' : 'none';
+      if (show) visible += 1;
+    });
+
+    if (countEl) {
+      const enSpan = countEl.querySelector('.lang-en');
+      const deSpan = countEl.querySelector('.lang-de');
+      if (enSpan) enSpan.textContent = `Showing ${visible} ${visible === 1 ? 'article' : 'articles'}`;
+      if (deSpan) deSpan.textContent = `${visible} ${visible === 1 ? 'Beitrag' : 'Beiträge'} angezeigt`;
+    }
+    if (emptyEl) {
+      emptyEl.hidden = visible > 0;
+    }
+  }
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeCategory = btn.dataset.filter ?? 'All';
+      filterButtons.forEach((b) => {
+        const isCurrent = b === btn;
+        b.classList.toggle('filter-btn--active', isCurrent);
+        b.setAttribute('aria-pressed', String(isCurrent));
+      });
+      applyFilters();
+    });
+  });
+
+  searchInput?.addEventListener('input', applyFilters);
+
+  resetBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    activeCategory = 'All';
+    filterButtons.forEach((b, idx) => {
+      const isAll = idx === 0;
+      b.classList.toggle('filter-btn--active', isAll);
+      b.setAttribute('aria-pressed', String(isAll));
+    });
+    applyFilters();
+  });
+</script>

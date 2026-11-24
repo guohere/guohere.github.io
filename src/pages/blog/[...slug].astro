@@ -1,0 +1,305 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, estimateReadingTime } from '../../utils/blog';
+import { CATEGORY_LABELS } from '../../data/profile';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  return posts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      newerPost: index > 0 ? posts[index - 1] : null,
+      olderPost: index < posts.length - 1 ? posts[index + 1] : null,
+    },
+  }));
+}
+
+const { post, newerPost, olderPost } = Astro.props;
+const { Content, headings } = await render(post);
+const readingTime = estimateReadingTime(post.body);
+const readingTimeDe = readingTime.replace('min read', 'Min. Lesezeit');
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const catLabel = CATEGORY_LABELS[post.data.category] ?? {
+  en: post.data.category,
+  de: post.data.category,
+};
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} ogType="article">
+  <article class="section article-page">
+    <div class="container container--narrow">
+      <a href="/blog/" class="back-link">
+        <span class="lang-en">&larr; Back to Blog</span>
+        <span class="lang-de">&larr; Zurück zum Blog</span>
+      </a>
+
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="article-category">
+            <span class="lang-en">{catLabel.en}</span>
+            <span class="lang-de">{catLabel.de}</span>
+          </span>
+          <span aria-hidden="true">·</span>
+          <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+          {post.data.updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span class="lang-en">Updated {formatDate(post.data.updatedDate)}</span>
+              <span class="lang-de">Aktualisiert {formatDate(post.data.updatedDate)}</span>
+            </>
+          )}
+          <span aria-hidden="true">·</span>
+          <span class="lang-en">{readingTime}</span>
+          <span class="lang-de">{readingTimeDe}</span>
+        </div>
+
+        <h1 class="article-title">
+          <span class="lang-en">{post.data.title}</span>
+          <span class="lang-de">{post.data.titleDe ?? post.data.title}</span>
+        </h1>
+        <p class="article-description">
+          <span class="lang-en">{post.data.description}</span>
+          <span class="lang-de">{post.data.descriptionDe ?? post.data.description}</span>
+        </p>
+
+        {post.data.tags.length > 0 && (
+          <ul class="tag-list" aria-label="Article tags">
+            {post.data.tags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+        )}
+      </header>
+
+      {post.data.lang === 'en' && (
+        <p class="lang-note lang-de">
+          Hinweis: Der folgende technische Artikel ist auf Englisch verfasst.
+        </p>
+      )}
+      {post.data.lang === 'de' && (
+        <p class="lang-note lang-en">
+          Note: This technical article is written in German.
+        </p>
+      )}
+
+      {tocHeadings.length >= 2 && (
+        <details class="toc-box" open>
+          <summary class="toc-title">
+            <span class="lang-en">On this page</span>
+            <span class="lang-de">Auf dieser Seite</span>
+          </summary>
+          <ol class="toc-list">
+            {tocHeadings.map((h) => (
+              <li class:list={['toc-item', { 'toc-item--sub': h.depth === 3 }]}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {(newerPost || olderPost) && (
+        <nav class="post-nav" aria-label="More articles">
+          {olderPost ? (
+            <a href={`/blog/${olderPost.id}/`} class="post-nav-card">
+              <span class="post-nav-label">
+                <span class="lang-en">&larr; Previous</span>
+                <span class="lang-de">&larr; Vorheriger</span>
+              </span>
+              <span class="post-nav-title">
+                <span class="lang-en">{olderPost.data.title}</span>
+                <span class="lang-de">{olderPost.data.titleDe ?? olderPost.data.title}</span>
+              </span>
+            </a>
+          ) : (
+            <div />
+          )}
+
+          {newerPost ? (
+            <a href={`/blog/${newerPost.id}/`} class="post-nav-card post-nav-card--next">
+              <span class="post-nav-label">
+                <span class="lang-en">Next &rarr;</span>
+                <span class="lang-de">Nächster &rarr;</span>
+              </span>
+              <span class="post-nav-title">
+                <span class="lang-en">{newerPost.data.title}</span>
+                <span class="lang-de">{newerPost.data.titleDe ?? newerPost.data.title}</span>
+              </span>
+            </a>
+          ) : (
+            <div />
+          )}
+        </nav>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .article-header {
+    padding-bottom: 1.75rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .article-category {
+    color: var(--accent-ink);
+    background-color: var(--accent-soft);
+    padding: 0.14rem 0.55rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .article-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.95rem, 4vw, 2.7rem);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.18;
+    margin: 0 0 0.85rem;
+    color: var(--ink);
+  }
+
+  .article-description {
+    margin: 0 0 1.25rem;
+    font-size: 1.08rem;
+    color: var(--ink-secondary);
+    line-height: 1.6;
+  }
+
+  .lang-note {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.9rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .toc-box {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .toc-list {
+    margin: 0.8rem 0 0;
+    padding-left: 1.15rem;
+    font-size: 0.9rem;
+  }
+
+  .toc-item {
+    margin-bottom: 0.35rem;
+  }
+
+  .toc-item--sub {
+    margin-left: 1rem;
+    list-style-type: disc;
+  }
+
+  .toc-item a {
+    color: var(--ink-secondary);
+  }
+
+  .toc-item a:hover {
+    color: var(--accent);
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 3.25rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-nav-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.1rem 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition), transform var(--transition);
+  }
+
+  .post-nav-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+
+  .post-nav-card--next {
+    text-align: right;
+  }
+
+  .post-nav-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+
+  .post-nav-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .post-nav-card--next {
+      text-align: left;
+    }
+  }
+</style>

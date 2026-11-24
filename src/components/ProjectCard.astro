@@ -1,0 +1,184 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { STATUS_LABELS } from '../data/profile';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const {
+  title,
+  titleDe,
+  summary,
+  summaryDe,
+  period,
+  periodDe,
+  status,
+  metrics,
+  metricsDe,
+  tags,
+  repoUrl,
+} = project.data;
+const statusLabel = STATUS_LABELS[status] ?? { en: status, de: status };
+---
+
+<article class="card card--interactive project-card">
+  <div class="project-top">
+    <span class="project-period">
+      <span class="lang-en">{period}</span>
+      <span class="lang-de">{periodDe ?? period}</span>
+    </span>
+    <span class="project-status">
+      <span class="lang-en">{statusLabel.en}</span>
+      <span class="lang-de">{statusLabel.de}</span>
+    </span>
+  </div>
+
+  <h3 class="project-title">
+    <a href={`/projects/${project.id}/`} class="project-title-link">
+      <span class="lang-en">{title}</span>
+      <span class="lang-de">{titleDe ?? title}</span>
+    </a>
+  </h3>
+
+  <p class="project-summary">
+    <span class="lang-en">{summary}</span>
+    <span class="lang-de">{summaryDe ?? summary}</span>
+  </p>
+
+  {metrics && (
+    <p class="project-metric">
+      <span class="metric-label">
+        <span class="lang-en">Key Result</span>
+        <span class="lang-de">Ergebnis</span>
+      </span>
+      <span class="metric-value">
+        <span class="lang-en">{metrics}</span>
+        <span class="lang-de">{metricsDe ?? metrics}</span>
+      </span>
+    </p>
+  )}
+
+  <div class="project-footer">
+    <ul class="tag-list" aria-label="Technologies used">
+      {tags.slice(0, 5).map((tag) => (
+        <li class="tag">{tag}</li>
+      ))}
+    </ul>
+
+    <div class="project-links">
+      <a href={`/projects/${project.id}/`} class="project-action">
+        <span class="lang-en">Case study &rarr;</span>
+        <span class="lang-de">Fallstudie &rarr;</span>
+      </a>
+      {repoUrl && (
+        <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="project-action project-action--muted">
+          GitHub
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .project-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .project-status {
+    padding: 0.14rem 0.52rem;
+    border-radius: 4px;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border);
+    color: var(--ink-secondary);
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.6rem;
+  }
+
+  .project-title-link {
+    color: var(--ink);
+  }
+
+  .project-title-link:hover {
+    color: var(--accent);
+  }
+
+  .project-summary {
+    margin: 0 0 1rem;
+    font-size: 0.94rem;
+    color: var(--ink-secondary);
+    line-height: 1.62;
+  }
+
+  .project-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0 0 1.15rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-subtle);
+    font-size: 0.86rem;
+  }
+
+  .metric-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+  }
+
+  .metric-value {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .project-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  .project-links {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .project-action--muted {
+    color: var(--ink-muted);
+  }
+
+  .project-action--muted:hover {
+    color: var(--ink);
+  }
+</style>

@@ -1,0 +1,543 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE, ABOUT, SKILL_GROUPS, EXPERIENCE, EDUCATION, INTERESTS } from '../data/profile';
+
+const featuredProjects = (await getCollection('projects', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout>
+  <!-- Compact, Simple Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">{SITE.title}</h1>
+        <p class="hero-greeting">
+          <span class="lang-en">{ABOUT.greeting.en}</span>
+          <span class="lang-de">{ABOUT.greeting.de}</span>
+        </p>
+        <p class="hero-summary">
+          <span class="lang-en">{ABOUT.summary.en}</span>
+          <span class="lang-de">{ABOUT.summary.de}</span>
+        </p>
+
+        <div class="hero-actions">
+          <a href="/blog/" class="btn btn--primary">
+            <span class="lang-en">Read the Blog</span>
+            <span class="lang-de">Zum Blog</span>
+          </a>
+          <a href="/projects/" class="btn btn--secondary">
+            <span class="lang-en">View Projects</span>
+            <span class="lang-de">Projekte ansehen</span>
+          </a>
+          <a href={SITE.github} target="_blank" rel="noopener noreferrer" class="hero-text-link">
+            GitHub &nearr;
+          </a>
+          <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer" class="hero-text-link">
+            LinkedIn &nearr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Blog Posts -->
+  <section id="blog" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Writing &amp; Research Notes</span>
+            <span class="lang-de">Beiträge &amp; Forschungsnotizen</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Latest from the Blog</span>
+            <span class="lang-de">Neueste Blogbeiträge</span>
+          </h2>
+        </div>
+        <a href="/blog/" class="section-link">
+          <span class="lang-en">All articles &rarr;</span>
+          <span class="lang-de">Alle Beiträge &rarr;</span>
+        </a>
+      </div>
+
+      <div class="posts-stack">
+        {recentPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Projects -->
+  <section id="projects" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Research &amp; Engineering</span>
+            <span class="lang-de">Forschung &amp; Entwicklung</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Selected Projects</span>
+            <span class="lang-de">Ausgewählte Projekte</span>
+          </h2>
+        </div>
+        <a href="/projects/" class="section-link">
+          <span class="lang-en">All projects &rarr;</span>
+          <span class="lang-de">Alle Projekte &rarr;</span>
+        </a>
+      </div>
+
+      <div class="projects-grid">
+        {featuredProjects.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience & Education -->
+  <section id="experience" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Curriculum Vitae</span>
+            <span class="lang-de">Lebenslauf</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Experience &amp; Education</span>
+            <span class="lang-de">Erfahrung &amp; Ausbildung</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="resume-stack">
+        <div>
+          <h3 class="column-label">
+            <span class="lang-en">Thesis &amp; Professional Experience</span>
+            <span class="lang-de">Masterarbeit &amp; Berufserfahrung</span>
+          </h3>
+          <div class="timeline-stack">
+            {EXPERIENCE.map((item) => (
+              <div class="card timeline-card">
+                <div class="timeline-head">
+                  <div>
+                    <h4 class="timeline-role">
+                      <span class="lang-en">{item.role.en}</span>
+                      <span class="lang-de">{item.role.de}</span>
+                    </h4>
+                    <p class="timeline-org">
+                      {item.organization} ·
+                      <span class="lang-en">{item.location.en}</span>
+                      <span class="lang-de">{item.location.de}</span>
+                    </p>
+                  </div>
+                  <span class="timeline-period">
+                    <span class="lang-en">{item.period.en}</span>
+                    <span class="lang-de">{item.period.de}</span>
+                  </span>
+                </div>
+                {item.subtitle && (
+                  <p class="timeline-subtitle">
+                    <span class="lang-en">{item.subtitle.en}</span>
+                    <span class="lang-de">{item.subtitle.de}</span>
+                  </p>
+                )}
+                <ul class="timeline-list">
+                  {item.highlights.map((h) => (
+                    <li>
+                      <span class="lang-en">
+                        <strong>{h.label.en}:</strong> {h.text.en}
+                      </span>
+                      <span class="lang-de">
+                        <strong>{h.label.de}:</strong> {h.text.de}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 class="column-label">
+            <span class="lang-en">Education</span>
+            <span class="lang-de">Ausbildung</span>
+          </h3>
+          <div class="grid-2">
+            {EDUCATION.map((edu) => (
+              <div class="card timeline-card">
+                <div class="timeline-head">
+                  <h4 class="timeline-role">
+                    <span class="lang-en">{edu.degree.en}</span>
+                    <span class="lang-de">{edu.degree.de}</span>
+                  </h4>
+                  <span class="timeline-period">
+                    <span class="lang-en">{edu.period.en}</span>
+                    <span class="lang-de">{edu.period.de}</span>
+                  </span>
+                </div>
+                <p class="timeline-org">
+                  {edu.institution} ·
+                  <span class="lang-en">{edu.location.en}</span>
+                  <span class="lang-de">{edu.location.de}</span>
+                </p>
+                <p class="timeline-focus">
+                  <span class="lang-en">{edu.focus.en}</span>
+                  <span class="lang-de">{edu.focus.de}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Skills -->
+  <section id="skills" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Capabilities</span>
+            <span class="lang-de">Kompetenzen</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Technical Skills</span>
+            <span class="lang-de">Technische Kenntnisse</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="skills-grid">
+        {SKILL_GROUPS.map((group) => (
+          <div class="card skill-card">
+            <h3 class="skill-heading">
+              <span class="lang-en">{group.category.en}</span>
+              <span class="lang-de">{group.category.de}</span>
+            </h3>
+            <ul class="tag-list">
+              {group.items.map((item) => (
+                <li class="tag">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Beyond the Code -->
+  <section id="interests" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Personal</span>
+            <span class="lang-de">Persönliches</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Beyond the Code</span>
+            <span class="lang-de">Abseits des Codes</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        {INTERESTS.map((item) => (
+          <div class="card interest-card">
+            <h3 class="interest-title">
+              <span class="lang-en">{item.title.en}</span>
+              <span class="lang-de">{item.title.de}</span>
+            </h3>
+            <p class="interest-copy">
+              <span class="lang-en">{item.description.en}</span>
+              <span class="lang-de">{item.description.de}</span>
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="contact-panel card">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Get in Touch</span>
+            <span class="lang-de">Kontaktaufnahme</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Connect</span>
+            <span class="lang-de">Kontakt</span>
+          </h2>
+          <p class="contact-copy">
+            <span class="lang-en">
+              {SITE.languages.en}. Full CV available upon request—happy to chat about AI Engineer, Edge AI, or
+              Machine Learning Engineer roles.
+            </span>
+            <span class="lang-de">
+              {SITE.languages.de}. Vollständiger Lebenslauf auf Anfrage – ich freue mich über den Austausch zu
+              Stellen als AI Engineer, Edge AI oder Machine Learning Engineer.
+            </span>
+          </p>
+        </div>
+
+        <div class="contact-actions">
+          <a href={`mailto:${SITE.email}`} class="btn btn--primary">
+            {SITE.email}
+          </a>
+          <div class="contact-socials">
+            <a href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub &nearr;</a>
+            <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn &nearr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Compact Hero */
+  .hero {
+    padding: 3.5rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-content {
+    max-width: 700px;
+  }
+
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 3.2vw, 2.4rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 0.35rem;
+    color: var(--ink);
+  }
+
+  .hero-greeting {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin: 0 0 1.1rem;
+  }
+
+  .hero-summary {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-secondary);
+    margin: 0 0 1.6rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.2rem;
+  }
+
+  .hero-text-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+  }
+
+  .hero-text-link:hover {
+    color: var(--accent);
+  }
+
+  /* Blog & Projects */
+  .posts-stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* Experience & Education */
+  .resume-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+
+  .timeline-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+
+  .column-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin: 0 0 0.9rem;
+  }
+
+  .timeline-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+  }
+
+  .timeline-role {
+    margin: 0;
+    font-size: 1.06rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .timeline-period {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .timeline-org {
+    margin: 0.2rem 0 0.65rem;
+    font-size: 0.9rem;
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+
+  .timeline-subtitle {
+    margin: 0 0 0.85rem;
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .timeline-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--ink-secondary);
+    font-size: 0.93rem;
+    line-height: 1.62;
+  }
+
+  .timeline-list li {
+    margin-bottom: 0.55rem;
+  }
+
+  .timeline-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-list strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .timeline-focus {
+    margin: 0;
+    font-size: 0.93rem;
+    color: var(--ink-secondary);
+    line-height: 1.6;
+  }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.15rem;
+  }
+
+  .skill-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .skill-heading {
+    margin: 0;
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* Interests */
+  .interest-title {
+    margin: 0 0 0.45rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .interest-copy {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--ink-secondary);
+    line-height: 1.6;
+  }
+
+  /* Contact */
+  .contact-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-copy {
+    margin: 0.7rem 0 0;
+    max-width: 540px;
+    color: var(--ink-secondary);
+    font-size: 0.95rem;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .contact-socials {
+    display: flex;
+    gap: 1.15rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 820px) {
+    .hero {
+      padding: 2.5rem 0 2.25rem;
+    }
+
+    .contact-panel {
+      padding: 1.5rem;
+    }
+  }
+</style>

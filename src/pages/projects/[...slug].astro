@@ -1,0 +1,205 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { STATUS_LABELS } from '../../data/profile';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const {
+  title,
+  titleDe,
+  summary,
+  summaryDe,
+  period,
+  periodDe,
+  role,
+  roleDe,
+  status,
+  metrics,
+  metricsDe,
+  tags,
+  repoUrl,
+  demoUrl,
+} = project.data;
+const statusLabel = STATUS_LABELS[status] ?? { en: status, de: status };
+---
+
+<BaseLayout title={title} description={summary} ogType="article">
+  <article class="section">
+    <div class="container container--narrow">
+      <a href="/projects/" class="back-link">
+        <span class="lang-en">&larr; Back to Projects</span>
+        <span class="lang-de">&larr; Zurück zu den Projekten</span>
+      </a>
+
+      <header class="project-header">
+        <div class="project-meta">
+          <span>
+            <span class="lang-en">{period}</span>
+            <span class="lang-de">{periodDe ?? period}</span>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            <span class="lang-en">{role}</span>
+            <span class="lang-de">{roleDe ?? role}</span>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span class="status-pill">
+            <span class="lang-en">{statusLabel.en}</span>
+            <span class="lang-de">{statusLabel.de}</span>
+          </span>
+        </div>
+
+        <h1 class="project-title">
+          <span class="lang-en">{title}</span>
+          <span class="lang-de">{titleDe ?? title}</span>
+        </h1>
+        <p class="project-summary">
+          <span class="lang-en">{summary}</span>
+          <span class="lang-de">{summaryDe ?? summary}</span>
+        </p>
+
+        {metrics && (
+          <div class="highlight-box">
+            <span class="highlight-label">
+              <span class="lang-en">Key Result</span>
+              <span class="lang-de">Ergebnis</span>
+            </span>
+            <span class="highlight-value">
+              <span class="lang-en">{metrics}</span>
+              <span class="lang-de">{metricsDe ?? metrics}</span>
+            </span>
+          </div>
+        )}
+
+        <div class="header-bottom">
+          <ul class="tag-list" aria-label="Technologies">
+            {tags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+
+          {(repoUrl || demoUrl) && (
+            <div class="external-links">
+              {repoUrl && (
+                <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn btn--primary">
+                  <span class="lang-en">View Source on GitHub</span>
+                  <span class="lang-de">Quellcode auf GitHub</span>
+                </a>
+              )}
+              {demoUrl && (
+                <a href={demoUrl} target="_blank" rel="noopener noreferrer" class="btn btn--secondary">
+                  Live Demo
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .project-header {
+    padding-bottom: 2rem;
+    margin-bottom: 2.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .status-pill {
+    padding: 0.14rem 0.55rem;
+    border-radius: 4px;
+    background-color: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.95rem, 4vw, 2.7rem);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.18;
+    margin: 0 0 0.85rem;
+  }
+
+  .project-summary {
+    margin: 0 0 1.25rem;
+    font-size: 1.08rem;
+    color: var(--ink-secondary);
+    line-height: 1.65;
+  }
+
+  .highlight-box {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border);
+  }
+
+  .highlight-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+  }
+
+  .highlight-value {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .header-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .external-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+</style>

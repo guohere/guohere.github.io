@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page Not Found" description="The page you requested could not be found.">
+  <section class="section">
+    <div class="container container--narrow not-found">
+      <p class="section-eyebrow">404</p>
+      <h1 class="section-title">
+        <span class="lang-en">Page not found</span>
+        <span class="lang-de">Seite nicht gefunden</span>
+      </h1>
+      <p class="not-found-copy">
+        <span class="lang-en">The link you followed may be outdated, or the page may have moved.</span>
+        <span class="lang-de">Der aufgerufene Link ist möglicherweise veraltet oder die Seite wurde verschoben.</span>
+      </p>
+      <div class="not-found-actions">
+        <a href="/" class="btn btn--primary">
+          <span class="lang-en">Back to Home</span>
+          <span class="lang-de">Zur Startseite</span>
+        </a>
+        <a href="/blog/" class="btn btn--secondary">
+          <span class="lang-en">Browse Blog</span>
+          <span class="lang-de">Zum Blog</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding: 4rem 0;
+  }
+
+  .not-found-copy {
+    color: var(--ink-secondary);
+    margin: 1rem 0 2rem;
+  }
+
+  .not-found-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+</style>
