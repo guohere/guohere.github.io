@@ -32,7 +32,7 @@ export const SITE = {
     'Personal website and technical blog of Xusheng Guo — M.Sc. Artificial Intelligence student at OTH Amberg-Weiden and Master thesis researcher at NXP Semiconductors focusing on LLM Quantization, Speculative Decoding (EAGLE-3), RAG, and Edge Robotics.',
   url: 'https://guohere.github.io',
   author: 'Xusheng Guo',
-  email: 'x.guo@oth-aw.de',
+  email: 'xusheng.guo@web.de',
   location: { en: 'Germany', de: 'Deutschland' },
   languages: {
     en: 'English: Fluent (C1) · German: Intermediate (B1)',

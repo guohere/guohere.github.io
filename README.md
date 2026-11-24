@@ -2,6 +2,16 @@
 
 Personal portfolio and technical blog hosted on GitHub Pages at **https://guohere.github.io**, built with **Astro**, **TypeScript**, **Content Collections (Zod)**, **KaTeX math rendering**, **Shiki syntax highlighting**, and automated **GitHub Actions CI/CD**.
 
+## Quick Edit Cheat Sheet (Only 3 Places You Need)
+
+You never need to touch `src/components/`, `src/layouts/`, `src/styles/`, or `.github/` for normal updates:
+
+| What you want to change | Where to edit |
+| :--- | :--- |
+| Email, bio, education, experience, skills (EN & DE) | `src/data/profile.ts` |
+| Add or edit a blog post | `src/content/blog/*.md` (1 file = 1 post) |
+| Add or edit a project | `src/content/projects/*.md` (1 file = 1 project) |
+
 ## Features
 
 - **Type-Safe Blog System (`src/content/blog/`):** Write posts in Markdown with schema-validated frontmatter, automatic reading time, table of contents, category filters, instant search, and RSS (`/rss.xml`).

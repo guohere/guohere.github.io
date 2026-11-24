@@ -2,8 +2,16 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import PostCard from '../components/PostCard.astro';
-import { SITE, ABOUT, SKILL_GROUPS, EXPERIENCE, EDUCATION, INTERESTS } from '../data/profile';
+import {
+  SITE,
+  ABOUT,
+  SKILL_GROUPS,
+  EXPERIENCE,
+  EDUCATION,
+  INTERESTS,
+  CATEGORY_LABELS,
+} from '../data/profile';
+import { formatDate } from '../utils/blog';
 
 const featuredProjects = (await getCollection('projects', ({ data }) => data.featured)).sort(
   (a, b) => a.data.order - b.data.order
@@ -11,7 +19,7 @@ const featuredProjects = (await getCollection('projects', ({ data }) => data.fea
 
 const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+  .slice(0, 5);
 ---
 
 <BaseLayout>
@@ -49,35 +57,153 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <!-- Latest Blog Posts -->
-  <section id="blog" class="section">
+  <!-- Compact Latest Blog Posts (title-only list) -->
+  <section id="blog" class="section section--compact">
     <div class="container">
-      <div class="section-header">
-        <div>
-          <p class="section-eyebrow">
-            <span class="lang-en">Writing &amp; Research Notes</span>
-            <span class="lang-de">Beiträge &amp; Forschungsnotizen</span>
-          </p>
-          <h2 class="section-title">
-            <span class="lang-en">Latest from the Blog</span>
-            <span class="lang-de">Neueste Blogbeiträge</span>
-          </h2>
-        </div>
+      <div class="section-header section-header--compact">
+        <h2 class="section-title section-title--sm">
+          <span class="lang-en">Latest from the Blog</span>
+          <span class="lang-de">Neueste Blogbeiträge</span>
+        </h2>
         <a href="/blog/" class="section-link">
           <span class="lang-en">All articles &rarr;</span>
           <span class="lang-de">Alle Beiträge &rarr;</span>
         </a>
       </div>
 
-      <div class="posts-stack">
-        {recentPosts.map((post) => (
-          <PostCard post={post} />
+      <ul class="compact-post-list">
+        {recentPosts.map((post) => {
+          const catLabel = CATEGORY_LABELS[post.data.category] ?? {
+            en: post.data.category,
+            de: post.data.category,
+          };
+          return (
+            <li class="compact-post-item">
+              <a href={`/blog/${post.id}/`} class="compact-post-link">
+                <time class="compact-post-date" datetime={post.data.pubDate.toISOString()}>
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <span class="compact-post-title">
+                  <span class="lang-en">{post.data.title}</span>
+                  <span class="lang-de">{post.data.titleDe ?? post.data.title}</span>
+                </span>
+                <span class="compact-post-cat">
+                  <span class="lang-en">{catLabel.en}</span>
+                  <span class="lang-de">{catLabel.de}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 1. Education -->
+  <section id="education" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Academic Background</span>
+            <span class="lang-de">Akademischer Werdegang</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Education</span>
+            <span class="lang-de">Ausbildung</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        {EDUCATION.map((edu) => (
+          <div class="card timeline-card">
+            <div class="timeline-head">
+              <h3 class="timeline-role">
+                <span class="lang-en">{edu.degree.en}</span>
+                <span class="lang-de">{edu.degree.de}</span>
+              </h3>
+              <span class="timeline-period">
+                <span class="lang-en">{edu.period.en}</span>
+                <span class="lang-de">{edu.period.de}</span>
+              </span>
+            </div>
+            <p class="timeline-org">
+              {edu.institution} ·
+              <span class="lang-en">{edu.location.en}</span>
+              <span class="lang-de">{edu.location.de}</span>
+            </p>
+            <p class="timeline-focus">
+              <span class="lang-en">{edu.focus.en}</span>
+              <span class="lang-de">{edu.focus.de}</span>
+            </p>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- Selected Projects -->
+  <!-- 2. Experience -->
+  <section id="experience" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">
+            <span class="lang-en">Thesis &amp; Industry</span>
+            <span class="lang-de">Masterarbeit &amp; Praxis</span>
+          </p>
+          <h2 class="section-title">
+            <span class="lang-en">Experience</span>
+            <span class="lang-de">Berufserfahrung</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="timeline-stack">
+        {EXPERIENCE.map((item) => (
+          <div class="card timeline-card">
+            <div class="timeline-head">
+              <div>
+                <h3 class="timeline-role">
+                  <span class="lang-en">{item.role.en}</span>
+                  <span class="lang-de">{item.role.de}</span>
+                </h3>
+                <p class="timeline-org">
+                  {item.organization} ·
+                  <span class="lang-en">{item.location.en}</span>
+                  <span class="lang-de">{item.location.de}</span>
+                </p>
+              </div>
+              <span class="timeline-period">
+                <span class="lang-en">{item.period.en}</span>
+                <span class="lang-de">{item.period.de}</span>
+              </span>
+            </div>
+            {item.subtitle && (
+              <p class="timeline-subtitle">
+                <span class="lang-en">{item.subtitle.en}</span>
+                <span class="lang-de">{item.subtitle.de}</span>
+              </p>
+            )}
+            <ul class="timeline-list">
+              {item.highlights.map((h) => (
+                <li>
+                  <span class="lang-en">
+                    <strong>{h.label.en}:</strong> {h.text.en}
+                  </span>
+                  <span class="lang-de">
+                    <strong>{h.label.de}:</strong> {h.text.de}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Selected Projects -->
   <section id="projects" class="section">
     <div class="container">
       <div class="section-header">
@@ -101,106 +227,6 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
         {featuredProjects.map((project) => (
           <ProjectCard project={project} />
         ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Experience & Education -->
-  <section id="experience" class="section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <p class="section-eyebrow">
-            <span class="lang-en">Curriculum Vitae</span>
-            <span class="lang-de">Lebenslauf</span>
-          </p>
-          <h2 class="section-title">
-            <span class="lang-en">Experience &amp; Education</span>
-            <span class="lang-de">Erfahrung &amp; Ausbildung</span>
-          </h2>
-        </div>
-      </div>
-
-      <div class="resume-stack">
-        <div>
-          <h3 class="column-label">
-            <span class="lang-en">Thesis &amp; Professional Experience</span>
-            <span class="lang-de">Masterarbeit &amp; Berufserfahrung</span>
-          </h3>
-          <div class="timeline-stack">
-            {EXPERIENCE.map((item) => (
-              <div class="card timeline-card">
-                <div class="timeline-head">
-                  <div>
-                    <h4 class="timeline-role">
-                      <span class="lang-en">{item.role.en}</span>
-                      <span class="lang-de">{item.role.de}</span>
-                    </h4>
-                    <p class="timeline-org">
-                      {item.organization} ·
-                      <span class="lang-en">{item.location.en}</span>
-                      <span class="lang-de">{item.location.de}</span>
-                    </p>
-                  </div>
-                  <span class="timeline-period">
-                    <span class="lang-en">{item.period.en}</span>
-                    <span class="lang-de">{item.period.de}</span>
-                  </span>
-                </div>
-                {item.subtitle && (
-                  <p class="timeline-subtitle">
-                    <span class="lang-en">{item.subtitle.en}</span>
-                    <span class="lang-de">{item.subtitle.de}</span>
-                  </p>
-                )}
-                <ul class="timeline-list">
-                  {item.highlights.map((h) => (
-                    <li>
-                      <span class="lang-en">
-                        <strong>{h.label.en}:</strong> {h.text.en}
-                      </span>
-                      <span class="lang-de">
-                        <strong>{h.label.de}:</strong> {h.text.de}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 class="column-label">
-            <span class="lang-en">Education</span>
-            <span class="lang-de">Ausbildung</span>
-          </h3>
-          <div class="grid-2">
-            {EDUCATION.map((edu) => (
-              <div class="card timeline-card">
-                <div class="timeline-head">
-                  <h4 class="timeline-role">
-                    <span class="lang-en">{edu.degree.en}</span>
-                    <span class="lang-de">{edu.degree.de}</span>
-                  </h4>
-                  <span class="timeline-period">
-                    <span class="lang-en">{edu.period.en}</span>
-                    <span class="lang-de">{edu.period.de}</span>
-                  </span>
-                </div>
-                <p class="timeline-org">
-                  {edu.institution} ·
-                  <span class="lang-en">{edu.location.en}</span>
-                  <span class="lang-de">{edu.location.de}</span>
-                </p>
-                <p class="timeline-focus">
-                  <span class="lang-en">{edu.focus.en}</span>
-                  <span class="lang-de">{edu.focus.de}</span>
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -314,7 +340,7 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
 <style>
   /* Compact Hero */
   .hero {
-    padding: 3.5rem 0 3rem;
+    padding: 3.25rem 0 2.75rem;
     border-bottom: 1px solid var(--border);
   }
 
@@ -336,14 +362,14 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
     font-size: 1.05rem;
     font-weight: 500;
     color: var(--ink-muted);
-    margin: 0 0 1.1rem;
+    margin: 0 0 1.05rem;
   }
 
   .hero-summary {
     font-size: 1rem;
     line-height: 1.7;
     color: var(--ink-secondary);
-    margin: 0 0 1.6rem;
+    margin: 0 0 1.5rem;
   }
 
   .hero-actions {
@@ -363,13 +389,94 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
     color: var(--accent);
   }
 
-  /* Blog & Projects */
-  .posts-stack {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  /* Compact Blog Strip */
+  .section--compact {
+    padding: 2.25rem 0;
   }
 
+  .section-header--compact {
+    margin-bottom: 1rem;
+  }
+
+  .section-title--sm {
+    font-size: clamp(1.35rem, 2.4vw, 1.6rem);
+  }
+
+  .compact-post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .compact-post-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compact-post-link {
+    display: grid;
+    grid-template-columns: 7.25rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem 1.25rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    transition: background-color var(--transition), color var(--transition);
+  }
+
+  .compact-post-link:hover {
+    background-color: var(--surface-subtle);
+  }
+
+  .compact-post-link:hover .compact-post-title {
+    color: var(--accent);
+  }
+
+  .compact-post-date {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .compact-post-title {
+    font-size: 0.96rem;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color var(--transition);
+  }
+
+  .compact-post-cat {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent-ink);
+    background-color: var(--accent-soft);
+    padding: 0.12rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 680px) {
+    .compact-post-link {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+      padding: 0.75rem 0.25rem;
+    }
+
+    .compact-post-title {
+      white-space: normal;
+    }
+
+    .compact-post-cat {
+      justify-self: start;
+      margin-top: 0.15rem;
+    }
+  }
+
+  /* Projects */
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -377,26 +484,10 @@ const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
   }
 
   /* Experience & Education */
-  .resume-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2.25rem;
-  }
-
   .timeline-stack {
     display: flex;
     flex-direction: column;
     gap: 1.15rem;
-  }
-
-  .column-label {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-muted);
-    margin: 0 0 0.9rem;
   }
 
   .timeline-head {
