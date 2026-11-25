@@ -60,6 +60,7 @@ export const CATEGORY_LABELS: Record<string, BilingualText> = {
   'AI & LLMs': { en: 'AI & LLMs', de: 'KI & LLMs' },
   Robotics: { en: 'Robotics', de: 'Robotik' },
   Engineering: { en: 'Engineering', de: 'Engineering' },
+  Updates: { en: 'Updates', de: 'Aktuelles' },
 };
 
 export const STATUS_LABELS: Record<string, BilingualText> = {

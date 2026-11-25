@@ -11,7 +11,7 @@ const blog = defineCollection({
     descriptionDe: z.string().optional(),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    category: z.enum(['Master Thesis', 'Projects', 'AI & LLMs', 'Robotics', 'Engineering']),
+    category: z.enum(['Master Thesis', 'Projects', 'AI & LLMs', 'Robotics', 'Engineering', 'Updates']),
     tags: z.array(z.string()).default([]),
     lang: z.enum(['en', 'de']).default('en'),
     draft: z.boolean().default(false),
