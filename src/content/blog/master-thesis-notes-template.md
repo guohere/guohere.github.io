@@ -9,13 +9,11 @@ tags: ['Quantization', 'Speculative Decoding', 'EAGLE-3', 'QAT', 'ONNX Runtime']
 featured: true
 ---
 
-> **Editable Notes Template:** Expand or duplicate this file in `src/content/blog/` to turn your Master’s thesis chapters into a public knowledge-summary series.
-
 ## 1. Why Study Quantization + Speculative Decoding Together?
 
 Both **quantization** and **speculative decoding** speed up LLM inference, yet combining them naively on edge CPUs can actually slow down generation. When a target model is quantized (e.g., W4A8 or W8A8), its memory bottleneck shrinks—meaning any overhead from the draft model or drop in token acceptance rate hurts net throughput immediately.
 
-In my thesis at **NXP Semiconductors**, I evaluated **Qwen3-1.7B** and **Llama-3.2-1B** paired with **EAGLE-3** drafts across an independent target (FP32 → 2-bit) and draft (FP32 → 1-bit) precision matrix on **ONNX Runtime**.
+In my thesis at **NXP Semiconductors**, I evaluated **Qwen3-1.7B** and **Llama-3.2-1B-Instruct** paired with **EAGLE-3** drafts across an independent target (FP32 → 2-bit) and draft (FP32 → 1-bit) precision matrix on **ONNX Runtime**.
 
 ## 2. Quantization-Aware Training (QAT) with Straight-Through Estimator
 
