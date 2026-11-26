@@ -21,6 +21,8 @@ The goal is simple: turn German preparation into active, targeted training rathe
 - **Active skill training:** Practicing reading, structured writing (including realistic German workplace and exam prompts), and vocabulary recall in short, repeatable daily sessions.
 - **Real motivation:** Improving my German isn’t just for the B1 certificate—I want to be comfortable collaborating in both English- and German-speaking engineering teams here in Germany.
 
+For a deeper engineering breakdown of the inline speaking roleplay state machine, context-disambiguated German speech matching, and phonetic coaching loop, see [Building an Inline AI German Roleplay & Pronunciation Coach](/blog/ai-german-roleplay-pronunciation-coach/).
+
 ## 2. Next Up on the Engineering Side: C++ and Rust
 
 Most of my machine learning work so far has been in **Python** and **PyTorch**, along with **ONNX Runtime** and **ROS2** on edge devices. Next, I am planning to dive systematically into **C++** and **Rust**:
