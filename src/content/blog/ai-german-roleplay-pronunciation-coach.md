@@ -11,17 +11,18 @@ featured: true
 
 Reading German dialogues silently from a textbook rarely fixes real-time speaking hesitations. Ahead of my December German B1 exam, I built an inline **AI Roleplay & Pronunciation Coach** (*„KI-Rollenspiel & Aussprache-Check“*) inside my German coaching web app so I can practice realistic turn-by-turn conversations with live word-level alignment and phonetic feedback.
 
-<!--
-Demo video embed (uncomment and replace YOUR_YOUTUBE_VIDEO_ID once uploaded):
 <div class="video-embed">
   <iframe
-    src="https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID"
+    src="https://www.youtube-nocookie.com/embed/UnZ6guA9w6I"
     title="AI German Roleplay & Pronunciation Coach Demo"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
     allowfullscreen
   ></iframe>
 </div>
--->
+
+*Demo walkthrough of the inline roleplay & pronunciation check ([watch on YouTube](https://www.youtube.com/watch?v=UnZ6guA9w6I)).*
 
 ## 1. Inline Turn-by-Turn Workflow
 
