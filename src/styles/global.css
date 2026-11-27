@@ -29,8 +29,8 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Layout */
-  --max-width: 1000px;
-  --prose-width: 720px;
+  --max-width: 1440px;
+  --prose-width: 1200px;
   --nav-height: 68px;
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -124,14 +124,22 @@ a:hover {
 
 /* Layout Utilities */
 .container {
-  width: 100%;
+  width: 80%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
 .container--narrow {
+  width: 80%;
   max-width: var(--prose-width);
+}
+
+@media (max-width: 900px) {
+  .container,
+  .container--narrow {
+    width: 100%;
+  }
 }
 
 .section {
