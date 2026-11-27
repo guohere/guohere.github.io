@@ -124,14 +124,14 @@ a:hover {
 
 /* Layout Utilities */
 .container {
-  width: 80%;
+  width: 70%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
 .container--narrow {
-  width: 80%;
+  width: 70%;
   max-width: var(--prose-width);
 }
 
